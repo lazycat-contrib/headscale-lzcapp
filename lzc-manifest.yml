@@ -5,20 +5,20 @@ application:
       backend: http://headplane:3000/admin
     - location: /
       backend: http://headscale:8080/
-
 services:
   config-init:
     # busybox:1.36
-    image: registry.lazycat.cloud/czyt/library/busybox:39a7d89478d940bf
+    # upstream: busybox:1.38.0
+    image: registry.lazycat.cloud/czyt/library/busybox:97083f278fb92df7
     command: sh -c 'mkdir -p /etc/headscale /etc/headplane /var/lib/headscale /var/lib/headplane && [ -f /etc/headscale/config.yaml ] || cp /lzcapp/pkg/content/headscale-config.yaml /etc/headscale/config.yaml && [ -f /etc/headscale/dns_records.json ] || printf "[]\n" > /etc/headscale/dns_records.json && [ -f /etc/headplane/config.yaml ] || cp /lzcapp/pkg/content/headplane-config.yaml /etc/headplane/config.yaml && sleep infinity'
     binds:
       - /lzcapp/var/headscale/config:/etc/headscale
       - /lzcapp/var/headscale/lib:/var/lib/headscale
       - /lzcapp/var/headplane/config:/etc/headplane
       - /lzcapp/var/headplane/lib:/var/lib/headplane
-
   headscale:
     # headscale/headscale:v0.29.3
+    # upstream: headscale/headscale:v0.29.3
     image: registry.lazycat.cloud/czyt/headscale/headscale:1307b4d355efbcf1
     command: serve
     depends_on:
@@ -33,9 +33,9 @@ services:
         - CMD
         - headscale
         - health
-
   headplane:
     # ghcr.io/tale/headplane:0.7.0
+    # upstream: ghcr.io/tale/headplane:0.7.0
     image: registry.lazycat.cloud/czyt/tale/headplane:83c5031d9ddb00cc
     depends_on:
       - config-init
@@ -52,7 +52,6 @@ services:
       timeout: 5s
       start_period: 5s
       retries: 3
-
 usage: |
   Open /admin to access the Headplane management UI.
 
