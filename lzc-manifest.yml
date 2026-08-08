@@ -9,7 +9,8 @@ application:
       path: /
   upstreams:
     - location: /admin
-      backend: http://headplane:3000/admin/
+      backend: http://headplane:3000/
+      disable_trim_location: true
     - location: /
       backend: http://headscale:8080/
 services:
