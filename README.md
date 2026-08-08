@@ -2,6 +2,8 @@
 
 This repository packages Headscale with the Headplane Web UI as a LazyCat LPK v2 application.
 
+本仓库将 Headscale 和 Headplane Web 管理界面打包为懒猫微服 LPK v2 应用。默认入口打开 Headplane，Headscale 控制服务保留在根路径供 Tailscale 客户端连接。
+
 ## Images
 
 - `headscale/headscale:v0.29.3`
@@ -26,11 +28,25 @@ The Headscale container is distroless, so a small `config-init` service initiali
 
 The default launcher entry opens Headplane at `/admin`. The secondary Headscale entry keeps the control server path available at `/`.
 
+默认启动器入口会打开 Headplane 管理界面 `/admin`。第二个 Headscale 入口保留根路径 `/`，用于客户端连接控制服务。
+
 Create a Headscale API key from the Headscale service and use it to log in:
 
 ```bash
 headscale apikeys create --expiration 90d
 ```
+
+首次使用时，需要在 `headscale` 服务中创建 API Key，然后填入 Headplane 登录界面。
+
+## Custom Domain
+
+Set the optional `Public URL` install parameter to use a custom public Headscale URL, for example `https://hs.example.com`. Leave it empty to use the LazyCat app domain.
+
+自定义域名时，在安装参数 `公网访问地址` 中填写完整 URL，例如 `https://hs.example.com`。留空则使用懒猫应用域名。
+
+The custom domain must reverse proxy to this LazyCat app and support Headscale WebSocket POST upgrades. Do not set the MagicDNS tailnet domain to the same domain as the public Headscale URL.
+
+自定义域名必须正确反代到本应用，并支持 Headscale 所需的 WebSocket POST upgrade。MagicDNS 的 Tailnet 域名不能和 Headscale 公网访问域名相同。
 
 ## Headscale Notes
 

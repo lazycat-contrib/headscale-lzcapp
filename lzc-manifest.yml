@@ -18,7 +18,7 @@ services:
     # upstream: busybox:1.38.0
     image: registry.lazycat.cloud/czyt/library/busybox:97083f278fb92df7
     environment:
-      - PUBLIC_URL=https://{{.S.AppDomain}}
+      - PUBLIC_URL={{ if .U.public_url }}{{ .U.public_url }}{{ else }}https://{{ .S.AppDomain }}{{ end }}
       - TAILNET_DOMAIN={{ .U.tailnet_domain }}
       - HEADPLANE_COOKIE_SECRET={{ .U.headplane_cookie_secret }}
     command: |
@@ -186,9 +186,18 @@ services:
       start_period: 5s
       retries: 3
 usage: |
-  Open /admin to access the Headplane management UI.
+  默认入口会打开 Headplane 管理界面（/admin）。Headscale 控制服务保留在根路径（/），供 Tailscale 客户端连接使用。
 
-  On first use, create a Headscale API key from the headscale service:
+  首次使用时，需要在 headscale 服务中创建 Headscale API Key，然后填入 Headplane 登录界面：
   headscale apikeys create --expiration 90d
 
-  Headplane network-management mode uses the shared Headscale configuration directory and Docker socket access configured in lzc-build.yml compose_override.
+  如需自定义域名，请在安装参数 Public URL 中填写完整地址，例如 https://hs.example.com。该域名必须正确反代到本应用，并支持 Headscale 所需的 WebSocket POST upgrade。
+
+  Headplane 的网络管理模式使用共享的 Headscale 配置目录，并通过 lzc-build.yml compose_override 读取 Docker socket。
+
+  The default launcher entry opens Headplane at /admin. The Headscale control server remains available at / for Tailscale clients.
+
+  On first use, create a Headscale API key from the headscale service, then use it to log in to Headplane:
+  headscale apikeys create --expiration 90d
+
+  To use a custom domain, set Public URL to the full URL, for example https://hs.example.com. The domain must reverse proxy to this app and support Headscale WebSocket POST upgrades.

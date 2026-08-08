@@ -1,4 +1,9 @@
 params:
+  - id: public_url
+    type: string
+    name: Public URL
+    description: Public Headscale URL including scheme, for example https://hs.example.com. Leave empty to use the LazyCat app domain.
+    optional: true
   - id: tailnet_domain
     type: string
     name: Tailnet Domain
@@ -14,6 +19,9 @@ params:
 
 locales:
   zh:
+    public_url:
+      name: 公网访问地址
+      description: Headscale 对外访问完整地址，需包含协议，例如 https://hs.example.com。留空则使用懒猫应用域名。
     tailnet_domain:
       name: Tailnet 域名
       description: MagicDNS 基础域名，必须不同于 Headscale 服务域名。
@@ -21,6 +29,9 @@ locales:
       name: Headplane Cookie Secret
       description: 必须正好 32 个字符，用于签名 Headplane 会话 Cookie。
   en:
+    public_url:
+      name: Public URL
+      description: Public Headscale URL including scheme, for example https://hs.example.com. Leave empty to use the LazyCat app domain.
     tailnet_domain:
       name: Tailnet Domain
       description: MagicDNS base domain. It must be different from the Headscale server domain.
