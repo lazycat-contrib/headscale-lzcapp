@@ -1,0 +1,17 @@
+params:
+  - id: tailnet_domain
+    type: string
+    name: Tailnet Domain
+    description: MagicDNS base domain. It must be different from the Headscale server domain.
+    default_value: headscale.lan
+    optional: true
+
+locales:
+  zh:
+    tailnet_domain:
+      name: Tailnet 域名
+      description: MagicDNS 基础域名，必须不同于 Headscale 服务域名。
+  en:
+    tailnet_domain:
+      name: Tailnet Domain
+      description: MagicDNS base domain. It must be different from the Headscale server domain.

@@ -1,0 +1,62 @@
+application:
+  subdomain: headscale
+  upstreams:
+    - location: /admin
+      backend: http://headplane:3000/admin
+    - location: /
+      backend: http://headscale:8080/
+
+services:
+  config-init:
+    # busybox:1.36
+    image: registry.lazycat.cloud/czyt/library/busybox:39a7d89478d940bf
+    command: sh -c 'mkdir -p /etc/headscale /etc/headplane /var/lib/headscale /var/lib/headplane && [ -f /etc/headscale/config.yaml ] || cp /lzcapp/pkg/content/headscale-config.yaml /etc/headscale/config.yaml && [ -f /etc/headscale/dns_records.json ] || printf "[]\n" > /etc/headscale/dns_records.json && [ -f /etc/headplane/config.yaml ] || cp /lzcapp/pkg/content/headplane-config.yaml /etc/headplane/config.yaml && sleep infinity'
+    binds:
+      - /lzcapp/var/headscale/config:/etc/headscale
+      - /lzcapp/var/headscale/lib:/var/lib/headscale
+      - /lzcapp/var/headplane/config:/etc/headplane
+      - /lzcapp/var/headplane/lib:/var/lib/headplane
+
+  headscale:
+    # headscale/headscale:v0.29.3
+    image: registry.lazycat.cloud/czyt/headscale/headscale:1307b4d355efbcf1
+    command: serve
+    depends_on:
+      - config-init
+    binds:
+      - /lzcapp/var/headscale/config:/etc/headscale
+      - /lzcapp/var/headscale/lib:/var/lib/headscale
+    tmpfs:
+      - /var/run/headscale
+    healthcheck:
+      test:
+        - CMD
+        - headscale
+        - health
+
+  headplane:
+    # ghcr.io/tale/headplane:0.7.0
+    image: registry.lazycat.cloud/czyt/tale/headplane:83c5031d9ddb00cc
+    depends_on:
+      - config-init
+      - headscale
+    binds:
+      - /lzcapp/var/headplane/config:/etc/headplane
+      - /lzcapp/var/headplane/lib:/var/lib/headplane
+      - /lzcapp/var/headscale/config:/etc/headscale
+      - /lzcapp/var/headscale/lib:/var/lib/headscale
+    healthcheck:
+      test:
+        - /bin/hp_healthcheck
+      interval: 30s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
+
+usage: |
+  Open /admin to access the Headplane management UI.
+
+  On first use, create a Headscale API key from the headscale service:
+  headscale apikeys create --expiration 90d
+
+  Headplane network-management mode uses the shared Headscale configuration directory and Docker socket access configured in lzc-build.yml compose_override.

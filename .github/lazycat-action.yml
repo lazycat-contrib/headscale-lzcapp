@@ -1,0 +1,72 @@
+version: 1
+
+project:
+  root: .
+  build_config: lzc-build.yml
+  package_file: package.yml
+  output: dist/application.lpk
+  target_arch: amd64
+
+update:
+  strategy: publish
+  allow_downgrade: false
+  version_source:
+    type: image
+    image: headscale
+
+build:
+  run_buildscript: false
+
+images:
+  - id: config-init
+    target: service
+    service: config-init
+    source: busybox
+    channel: stable
+    sort: semver
+    tag_regex: '^\d+\.\d+\.\d+$'
+    delivery:
+      mode: lazycat
+
+  - id: headscale
+    target: service
+    service: headscale
+    source: headscale/headscale
+    channel: stable
+    sort: semver
+    tag_regex: '^v?\d+\.\d+\.\d+$'
+    delivery:
+      mode: lazycat
+
+  - id: headplane
+    target: service
+    service: headplane
+    source: ghcr.io/tale/headplane
+    channel: stable
+    sort: semver
+    tag_regex: '^v?\d+\.\d+\.\d+$'
+    delivery:
+      mode: lazycat
+
+stores:
+  official:
+    enabled: true
+    skip_if_version_exists: true
+    create_if_missing: true
+    changelog_locales:
+      - zh
+      - en
+    retry:
+      enabled: false
+      max_attempts: 3
+      initial_delay: 2s
+      max_delay: 30s
+    application:
+      language: zh
+      name: Headscale
+      source: https://github.com/lazycat-contrib/headscale
+      source_author: lazycat-contrib
+  private:
+    enabled: true
+    skip_if_version_exists: true
+    name: Headscale
