@@ -3,14 +3,16 @@ application:
   entries:
     - id: headplane
       title: Headplane
-      path: /admin
+      path: /admin/
     - id: headscale
       title: Headscale
       path: /
   upstreams:
-    - location: /admin
+    - location: /admin/
       backend: http://headplane:3000/
       disable_trim_location: true
+    - location: /admin
+      backend: http://headplane:3000/admin/
     - location: /
       backend: http://headscale:8080/
 services:
@@ -131,7 +133,7 @@ services:
           enabled: false
         docker:
           enabled: true
-          container_label: me.tale.headplane.target=headscale
+          container_name: headscale
           socket: unix:///var/run/docker.sock
         kubernetes:
           enabled: false

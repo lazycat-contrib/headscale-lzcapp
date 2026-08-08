@@ -4,6 +4,7 @@ icon: ./icon.png
 compose_override:
   services:
     headscale:
+      container_name: headscale
       read_only: true
       tmpfs:
         - /tmp

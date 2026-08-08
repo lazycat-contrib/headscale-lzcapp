@@ -26,9 +26,9 @@ The Headscale container is distroless, so a small `config-init` service initiali
 
 ## First Use
 
-The default launcher entry opens Headplane at `/admin`. The secondary Headscale entry keeps the control server path available at `/`.
+The default launcher entry opens Headplane at `/admin/`. The secondary Headscale entry keeps the control server path available at `/`.
 
-默认启动器入口会打开 Headplane 管理界面 `/admin`。第二个 Headscale 入口保留根路径 `/`，用于客户端连接控制服务。
+默认启动器入口会打开 Headplane 管理界面 `/admin/`。第二个 Headscale 入口保留根路径 `/`，用于客户端连接控制服务。
 
 Create a Headscale API key from the Headscale service and use it to log in:
 
