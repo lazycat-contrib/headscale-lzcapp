@@ -17,10 +17,6 @@ services:
     # busybox:1.36
     # upstream: busybox:1.38.0
     image: registry.lazycat.cloud/czyt/library/busybox:97083f278fb92df7
-    environment:
-      - PUBLIC_URL={{ if .U.public_url }}{{ .U.public_url }}{{ else }}https://{{ .S.AppDomain }}{{ end }}
-      - TAILNET_DOMAIN={{ .U.tailnet_domain }}
-      - HEADPLANE_COOKIE_SECRET={{ .U.headplane_cookie_secret }}
     command: |
       sh -c '
         mkdir -p /etc/headscale /etc/headplane /var/lib/headscale /var/lib/headplane
@@ -29,7 +25,7 @@ services:
         fi
         if [ ! -f /etc/headscale/config.yaml ]; then
           cat > /etc/headscale/config.yaml <<EOF
-      server_url: "${PUBLIC_URL}"
+      server_url: "{{ if .U.public_url }}{{ .U.public_url }}{{ else }}https://{{ .S.AppDomain }}{{ end }}"
       listen_addr: 0.0.0.0:8080
       metrics_listen_addr: 127.0.0.1:9090
       grpc_listen_addr: 127.0.0.1:50443
@@ -93,7 +89,7 @@ services:
         path: ""
       dns:
         magic_dns: true
-        base_domain: "${TAILNET_DOMAIN}"
+        base_domain: "{{ .U.tailnet_domain }}"
         override_local_dns: true
         nameservers:
           global:
@@ -119,14 +115,14 @@ services:
       server:
         host: 0.0.0.0
         port: 3000
-        base_url: "${PUBLIC_URL}"
-        cookie_secret: "${HEADPLANE_COOKIE_SECRET}"
+        base_url: "{{ if .U.public_url }}{{ .U.public_url }}{{ else }}https://{{ .S.AppDomain }}{{ end }}"
+        cookie_secret: "{{ .U.headplane_cookie_secret }}"
         cookie_secure: true
         cookie_max_age: 86400
         data_path: /var/lib/headplane
       headscale:
         url: http://headscale:8080
-        public_url: "${PUBLIC_URL}"
+        public_url: "{{ if .U.public_url }}{{ .U.public_url }}{{ else }}https://{{ .S.AppDomain }}{{ end }}"
         config_path: /etc/headscale/config.yaml
         dns_records_path: /etc/headscale/dns_records.json
       integration:
@@ -138,7 +134,10 @@ services:
           socket: unix:///var/run/docker.sock
         kubernetes:
           enabled: false
+          validate_manifest: true
           pod_name: ""
+        proc:
+          enabled: false
       EOF
         fi
         sleep infinity

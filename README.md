@@ -78,3 +78,14 @@ Optional GitHub Secrets:
 - `LZC_API_HOST`
 - `APP_ID`
 - `PRIVATE_STORE_GROUP_CODES`
+
+## Upstream Links
+
+- Headscale website: https://headscale.net/stable/
+- Headscale source: https://github.com/juanfont/headscale
+- Headscale container docs: https://headscale.net/stable/setup/install/container/
+- Headscale reverse proxy docs: https://headscale.net/stable/ref/integration/reverse-proxy/
+- Headplane website: https://headplane.net/
+- Headplane source: https://github.com/tale/headplane
+- Headplane configuration docs: https://headplane.net/configuration/
+- Headplane Docker docs: https://headplane.net/install/docker
