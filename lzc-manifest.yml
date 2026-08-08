@@ -1,5 +1,12 @@
 application:
   subdomain: headscale
+  entries:
+    - id: headplane
+      title: Headplane
+      path: /admin
+    - id: headscale
+      title: Headscale
+      path: /
   upstreams:
     - location: /admin
       backend: http://headplane:3000/admin

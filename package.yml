@@ -10,9 +10,13 @@ locales:
   zh:
     name: Headscale
     description: 带 Headplane Web 管理界面的自托管 Tailscale 控制服务器
+    entries.headplane.title: Headplane
+    entries.headscale.title: Headscale
   en:
     name: Headscale
     description: Self-hosted Tailscale control server with Headplane Web UI
+    entries.headplane.title: Headplane
+    entries.headscale.title: Headscale
 permissions:
   required:
     - net.internet

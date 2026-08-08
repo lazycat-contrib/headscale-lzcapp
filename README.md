@@ -24,7 +24,7 @@ The Headscale container is distroless, so a small `config-init` service initiali
 
 ## First Use
 
-Open `/admin` to access Headplane.
+The default launcher entry opens Headplane at `/admin`. The secondary Headscale entry keeps the control server path available at `/`.
 
 Create a Headscale API key from the Headscale service and use it to log in:
 
