@@ -36,7 +36,7 @@ headscale apikeys create --expiration 90d
 
 The default configuration follows the Headscale 0.29.3 documentation:
 
-- Headscale runs behind the LazyCat reverse proxy with `server_url` set to `https://{{.S.AppDomain}}`.
+- Headscale runs behind the LazyCat reverse proxy. `config-init` renders the final `server_url` from the LazyCat public application URL before Headscale starts.
 - TLS is terminated by LazyCat, so `tls_cert_path` and `tls_key_path` are empty.
 - `/var/run/headscale` is tmpfs, while `/etc/headscale` and `/var/lib/headscale` are persistent directories.
 - The official Headscale container is distroless, so configuration bootstrap is handled by the `config-init` service.

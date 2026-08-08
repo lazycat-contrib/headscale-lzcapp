@@ -17,7 +17,132 @@ services:
     # busybox:1.36
     # upstream: busybox:1.38.0
     image: registry.lazycat.cloud/czyt/library/busybox:97083f278fb92df7
-    command: sh -c 'mkdir -p /etc/headscale /etc/headplane /var/lib/headscale /var/lib/headplane && [ -f /etc/headscale/config.yaml ] || cp /lzcapp/pkg/content/headscale-config.yaml /etc/headscale/config.yaml && [ -f /etc/headscale/dns_records.json ] || printf "[]\n" > /etc/headscale/dns_records.json && [ -f /etc/headplane/config.yaml ] || cp /lzcapp/pkg/content/headplane-config.yaml /etc/headplane/config.yaml && sleep infinity'
+    environment:
+      - PUBLIC_URL=https://{{.S.AppDomain}}
+      - TAILNET_DOMAIN={{ .U.tailnet_domain }}
+      - HEADPLANE_COOKIE_SECRET={{ .U.headplane_cookie_secret }}
+    command: |
+      sh -c '
+        mkdir -p /etc/headscale /etc/headplane /var/lib/headscale /var/lib/headplane
+        if [ ! -f /etc/headscale/dns_records.json ]; then
+          printf "[]\n" > /etc/headscale/dns_records.json
+        fi
+        if [ ! -f /etc/headscale/config.yaml ]; then
+          cat > /etc/headscale/config.yaml <<EOF
+      server_url: "${PUBLIC_URL}"
+      listen_addr: 0.0.0.0:8080
+      metrics_listen_addr: 127.0.0.1:9090
+      grpc_listen_addr: 127.0.0.1:50443
+      grpc_allow_insecure: false
+      trusted_proxies: []
+      noise:
+        private_key_path: /var/lib/headscale/noise_private.key
+      prefixes:
+        v4: 100.64.0.0/10
+        v6: fd7a:115c:a1e0::/48
+        allocation: sequential
+      derp:
+        server:
+          enabled: false
+          region_id: 999
+          region_code: headscale
+          region_name: Headscale Embedded DERP
+          verify_clients: true
+          stun_listen_addr: 0.0.0.0:3478
+          private_key_path: /var/lib/headscale/derp_server_private.key
+          automatically_add_embedded_derp_region: true
+        urls:
+          - https://controlplane.tailscale.com/derpmap/default
+        paths: []
+        auto_update_enabled: true
+        update_frequency: 3h
+      disable_check_updates: true
+      node:
+        expiry: 0
+        ephemeral:
+          inactivity_timeout: 30m
+        routes:
+          ha:
+            probe_interval: 10s
+            probe_timeout: 5s
+      database:
+        type: sqlite
+        debug: false
+        gorm:
+          prepare_stmt: true
+          parameterized_queries: true
+          skip_err_record_not_found: true
+          slow_threshold: 1000
+        sqlite:
+          path: /var/lib/headscale/db.sqlite
+          write_ahead_log: true
+          wal_autocheckpoint: 1000
+      acme_url: https://acme-v02.api.letsencrypt.org/directory
+      acme_email: ""
+      tls_letsencrypt_hostname: ""
+      tls_letsencrypt_cache_dir: /var/lib/headscale/cache
+      tls_letsencrypt_challenge_type: HTTP-01
+      tls_letsencrypt_listen: ":http"
+      tls_cert_path: ""
+      tls_key_path: ""
+      log:
+        level: info
+        format: text
+      policy:
+        mode: file
+        path: ""
+      dns:
+        magic_dns: true
+        base_domain: "${TAILNET_DOMAIN}"
+        override_local_dns: true
+        nameservers:
+          global:
+            - 1.1.1.1
+            - 1.0.0.1
+            - 2606:4700:4700::1111
+            - 2606:4700:4700::1001
+          split: {}
+        search_domains: []
+        extra_records_path: /etc/headscale/dns_records.json
+      unix_socket: /var/run/headscale/headscale.sock
+      unix_socket_permission: "0770"
+      logtail:
+        enabled: false
+      taildrop:
+        enabled: true
+      auto_update:
+        enabled: false
+      EOF
+        fi
+        if [ ! -f /etc/headplane/config.yaml ]; then
+          cat > /etc/headplane/config.yaml <<EOF
+      server:
+        host: 0.0.0.0
+        port: 3000
+        base_url: "${PUBLIC_URL}"
+        cookie_secret: "${HEADPLANE_COOKIE_SECRET}"
+        cookie_secure: true
+        cookie_max_age: 86400
+        data_path: /var/lib/headplane
+      headscale:
+        url: http://headscale:8080
+        public_url: "${PUBLIC_URL}"
+        config_path: /etc/headscale/config.yaml
+        dns_records_path: /etc/headscale/dns_records.json
+      integration:
+        agent:
+          enabled: false
+        docker:
+          enabled: true
+          container_label: me.tale.headplane.target=headscale
+          socket: unix:///var/run/docker.sock
+        kubernetes:
+          enabled: false
+          pod_name: ""
+      EOF
+        fi
+        sleep infinity
+      '
     binds:
       - /lzcapp/var/headscale/config:/etc/headscale
       - /lzcapp/var/headscale/lib:/var/lib/headscale
