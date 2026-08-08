@@ -5,13 +5,25 @@ params:
     description: MagicDNS base domain. It must be different from the Headscale server domain.
     default_value: headscale.lan
     optional: true
+  - id: headplane_cookie_secret
+    type: secret
+    name: Headplane Cookie Secret
+    description: Exactly 32 characters. Used to sign Headplane session cookies.
+    default_value: "$random(len=32)"
+    optional: false
 
 locales:
   zh:
     tailnet_domain:
       name: Tailnet 域名
       description: MagicDNS 基础域名，必须不同于 Headscale 服务域名。
+    headplane_cookie_secret:
+      name: Headplane Cookie Secret
+      description: 必须正好 32 个字符，用于签名 Headplane 会话 Cookie。
   en:
     tailnet_domain:
       name: Tailnet Domain
       description: MagicDNS base domain. It must be different from the Headscale server domain.
+    headplane_cookie_secret:
+      name: Headplane Cookie Secret
+      description: Exactly 32 characters. Used to sign Headplane session cookies.

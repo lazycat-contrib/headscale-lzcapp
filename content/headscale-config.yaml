@@ -82,7 +82,6 @@ dns:
       - 2606:4700:4700::1001
     split: {}
   search_domains: []
-  extra_records: []
   extra_records_path: /etc/headscale/dns_records.json
 
 unix_socket: /var/run/headscale/headscale.sock
