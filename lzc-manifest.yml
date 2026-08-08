@@ -1,5 +1,7 @@
 application:
   subdomain: headscale
+  public_path:
+    - /
   entries:
     - id: headplane
       title: Headplane
@@ -15,6 +17,14 @@ application:
       backend: http://headplane:3000/admin/
     - location: /
       backend: http://headscale:8080/
+{{ if .U.enable_derp }}
+  ingress:
+    - protocol: udp
+      port: 3478
+      service: headscale
+      description: Headscale embedded DERP STUN
+      publish_port: "3478"
+{{ end }}
 services:
   config-init:
     # busybox:1.36
@@ -42,7 +52,7 @@ services:
         allocation: sequential
       derp:
         server:
-          enabled: false
+          enabled: {{ if .U.enable_derp }}true{{ else }}false{{ end }}
           region_id: 999
           region_code: headscale
           region_name: Headscale Embedded DERP
@@ -132,7 +142,7 @@ services:
         agent:
           enabled: false
         docker:
-          enabled: true
+          enabled: false
           container_name: headscale
           socket: unix:///var/run/docker.sock
         kubernetes:
@@ -188,18 +198,25 @@ services:
       start_period: 5s
       retries: 3
 usage: |
-  默认入口会打开 Headplane 管理界面（/admin）。Headscale 控制服务保留在根路径（/），供 Tailscale 客户端连接使用。
+  默认入口会打开 Headplane 管理界面（/admin/）。Headscale 控制服务和 API 保留在根路径（/），供 Tailscale 客户端连接使用。
 
-  首次使用时，需要在 headscale 服务中创建 Headscale API Key，然后填入 Headplane 登录界面：
-  headscale apikeys create --expiration 90d
+  首次使用 Headplane 时，需要创建 Headscale API Key，然后填入登录界面。懒猫开发环境可执行：
+  lzc-cli docker exec headscale /ko-app/headscale apikeys create --expiration 90d
 
   如需自定义域名，请在安装参数 Public URL 中填写完整地址，例如 https://hs.example.com。该域名必须正确反代到本应用，并支持 Headscale 所需的 WebSocket POST upgrade。
 
-  Headplane 的网络管理模式使用共享的 Headscale 配置目录，并通过 lzc-build.yml compose_override 读取 Docker socket。
+  Tailscale 客户端连接此 Headscale：
+  tailscale up --login-server=https://你的Headscale域名
 
-  The default launcher entry opens Headplane at /admin. The Headscale control server remains available at / for Tailscale clients.
+  子网路由示例：
+  tailscale up --login-server=https://你的Headscale域名 --advertise-routes=192.168.1.0/24
+  然后在 Headplane 的 Routes 页面启用该路由。
 
-  On first use, create a Headscale API key from the headscale service, then use it to log in to Headplane:
-  headscale apikeys create --expiration 90d
+  出口节点示例：
+  tailscale up --login-server=https://你的Headscale域名 --advertise-exit-node
+  然后在 Headplane 中启用对应路由，客户端使用：
+  tailscale up --login-server=https://你的Headscale域名 --exit-node=<节点名或100.x地址>
 
-  To use a custom domain, set Public URL to the full URL, for example https://hs.example.com. The domain must reverse proxy to this app and support Headscale WebSocket POST upgrades.
+  内置 DERP 默认关闭。需要作为 DERP/STUN 中继时，在安装参数中启用内置 DERP，并确保 UDP 3478 可以从公网访问。Headscale 官方要求内置 DERP 的 server_url 使用 HTTPS。
+
+  Headplane 使用共享的 Headscale 配置目录读取配置和 DNS 记录；默认关闭 Docker 集成，避免启动依赖 Docker API。playground Docker socket 仅按懒猫兼容方式挂载。
