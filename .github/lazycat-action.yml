@@ -64,7 +64,7 @@ stores:
     application:
       language: zh
       name: Headscale
-      source: https://github.com/lazycat-contrib/headscale
+      source: https://github.com/lazycat-contrib/headscale-lzcapp
       source_author: lazycat-contrib
   private:
     enabled: true
