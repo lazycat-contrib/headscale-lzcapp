@@ -41,7 +41,7 @@ For normal use, expose the LazyCat app domain over HTTPS and use that URL as the
 
 The reverse proxy in front of Headscale must support the Tailscale control protocol WebSocket upgrade. Per the Headscale reverse proxy documentation, Tailscale clients use `POST` for the WebSocket upgrade and the `Upgrade` header value is `tailscale-control-protocol`.
 
-Do not set the MagicDNS tailnet domain to the same domain as the public Headscale URL. For example, use `https://hs.example.com` as the server URL and `tailnet.example.com` or `headscale.lan` as the MagicDNS base domain.
+Do not set the MagicDNS tailnet domain to the same domain as the public Headscale URL. The MagicDNS base domain is an internal tailnet DNS suffix and does not need public DNS records. For example, use `https://hs.example.com` as the server URL and `tailnet.example.com` or `headscale.lan` as the MagicDNS base domain.
 
 ## Tailscale Client Setup
 

@@ -39,7 +39,7 @@ lzc-cli docker exec headscale /ko-app/headscale apikeys create --expiration 90d
 
 Headscale 官方反代文档要求：反向代理必须支持 Tailscale 控制协议的 WebSocket upgrade。Tailscale 客户端使用 `POST` 做 WebSocket upgrade，`Upgrade` header 的值是 `tailscale-control-protocol`。
 
-MagicDNS 的 Tailnet 域名不要和 Headscale 公网访问域名相同。例如公网地址使用 `https://hs.example.com`，MagicDNS 基础域名可使用 `tailnet.example.com` 或 `headscale.lan`。
+MagicDNS 的 Tailnet 域名不要和 Headscale 公网访问域名相同。它是 tailnet 内部 DNS 后缀，不需要公网 DNS 解析。例如公网地址使用 `https://hs.example.com`，MagicDNS 基础域名可使用 `tailnet.example.com` 或 `headscale.lan`。
 
 ## Tailscale 客户端连接
 
