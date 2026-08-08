@@ -9,7 +9,7 @@ application:
       path: /
   upstreams:
     - location: /admin
-      backend: http://headplane:3000/admin
+      backend: http://headplane:3000/
     - location: /
       backend: http://headscale:8080/
 services:
