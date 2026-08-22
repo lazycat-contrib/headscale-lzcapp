@@ -29,7 +29,7 @@ services:
   config-init:
     # busybox:1.36
     # upstream: busybox:1.38.0
-    image: registry.lazycat.cloud/czyt/library/busybox:97083f278fb92df7
+    image: docker.1ms.run/library/busybox:1.38.0
     command: |
       sh -c '
         mkdir -p /etc/headscale /etc/headplane /var/lib/headscale /var/lib/headplane
@@ -163,7 +163,7 @@ services:
   headscale:
     # headscale/headscale:v0.29.3
     # upstream: headscale/headscale:v0.29.3
-    image: registry.lazycat.cloud/czyt/headscale/headscale:1307b4d355efbcf1
+    image: docker.1ms.run/headscale/headscale:v0.29.3
     command: serve
     depends_on:
       - config-init
@@ -180,7 +180,7 @@ services:
   headplane:
     # ghcr.io/tale/headplane:0.7.0
     # upstream: ghcr.io/tale/headplane:0.7.0
-    image: registry.lazycat.cloud/czyt/tale/headplane:83c5031d9ddb00cc
+    image: ghcr.1ms.run/tale/headplane:0.7.0
     depends_on:
       - config-init
       - headscale
