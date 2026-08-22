@@ -26,7 +26,7 @@ images:
     sort: semver
     tag_regex: '^\d+\.\d+\.\d+$'
     delivery:
-      mode: lazycat
+      mode: mirror
 
   - id: headscale
     target: service
@@ -36,7 +36,7 @@ images:
     sort: semver
     tag_regex: '^v?\d+\.\d+\.\d+$'
     delivery:
-      mode: lazycat
+      mode: mirror
 
   - id: headplane
     target: service
@@ -46,26 +46,11 @@ images:
     sort: semver
     tag_regex: '^v?\d+\.\d+\.\d+$'
     delivery:
-      mode: lazycat
+      mode: mirror
 
 stores:
   official:
-    enabled: true
-    skip_if_version_exists: true
-    create_if_missing: true
-    changelog_locales:
-      - zh
-      - en
-    retry:
-      enabled: false
-      max_attempts: 3
-      initial_delay: 2s
-      max_delay: 30s
-    application:
-      language: zh
-      name: Headscale
-      source: https://github.com/lazycat-contrib/headscale-lzcapp
-      source_author: lazycat-contrib
+    enabled: false
   private:
     enabled: true
     skip_if_version_exists: true
