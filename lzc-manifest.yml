@@ -162,8 +162,8 @@ services:
       - /lzcapp/var/headplane/lib:/var/lib/headplane
   headscale:
     # headscale/headscale:v0.29.3
-    # upstream: headscale/headscale:v0.29.3
-    image: docker.1ms.run/headscale/headscale:v0.29.3
+    # upstream: headscale/headscale:v0.29.4
+    image: docker.1ms.run/headscale/headscale:v0.29.4
     command: serve
     depends_on:
       - config-init

@@ -1,5 +1,5 @@
 package: community.lazycat.app.headscale
-version: 0.29.3
+version: 0.29.4
 name: Headscale
 description: Self-hosted Tailscale control server with Headplane Web UI
 author: headscale
