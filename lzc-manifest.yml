@@ -179,8 +179,8 @@ services:
         - health
   headplane:
     # ghcr.io/tale/headplane:0.7.0
-    # upstream: ghcr.io/tale/headplane:0.8.0
-    image: ghcr.1ms.run/tale/headplane:0.8.0
+    # upstream: ghcr.io/tale/headplane:0.8.1
+    image: ghcr.1ms.run/tale/headplane:0.8.1
     depends_on:
       - config-init
       - headscale
